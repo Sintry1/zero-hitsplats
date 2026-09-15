@@ -1,4 +1,4 @@
-package com.zeroxpdrops;
+package com.zerohitsplats;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -9,14 +9,14 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
-public class ZeroXpDropsOverlayTest
+public class ZeroHitsplatsOverlayTest
 {
     @Test public void idleOverlayHasDraggableBoundsAndPreservesSavedPosition()
     {
         Client client = mock(Client.class);
         when(client.getGameState()).thenReturn(GameState.LOGGED_IN);
         when(client.getViewportWidth()).thenReturn(800);
-        ZeroXpDropsOverlay overlay = new ZeroXpDropsOverlay(client, new ZeroXpDropsConfig() {});
+        ZeroHitsplatsOverlay overlay = new ZeroHitsplatsOverlay(client, new ZeroHitsplatsConfig() {});
         Graphics2D g = new BufferedImage(800, 600, BufferedImage.TYPE_INT_ARGB).createGraphics();
         try
         {
@@ -45,7 +45,7 @@ public class ZeroXpDropsOverlayTest
         Client client = mock(Client.class);
         when(client.getGameState()).thenReturn(GameState.LOGGED_IN);
         when(client.getViewportWidth()).thenReturn(800);
-        ZeroXpDropsOverlay overlay = new ZeroXpDropsOverlay(client, new ZeroXpDropsConfig() {});
+        ZeroHitsplatsOverlay overlay = new ZeroHitsplatsOverlay(client, new ZeroHitsplatsConfig() {});
         overlay.setPreferredPosition(OverlayPosition.TOP_RIGHT);
         overlay.getBounds().setLocation(700, 25); // Position supplied by RuneLite's anchor layout.
         Graphics2D g = new BufferedImage(800, 600, BufferedImage.TYPE_INT_ARGB).createGraphics();
@@ -69,7 +69,7 @@ public class ZeroXpDropsOverlayTest
         BufferedImage image = new BufferedImage(200, 100, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = image.createGraphics();
         g.setFont(new Font("Dialog", Font.PLAIN, 16));
-        ZeroXpDropsOverlay.drawDrop(g, icon, 100, 50, size);
+        ZeroHitsplatsOverlay.drawDrop(g, icon, 100, 50, size);
         assertEquals(16, g.getFont().getSize());
         g.dispose();
         int count = 0;

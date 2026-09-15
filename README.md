@@ -1,4 +1,4 @@
-# Zero XP Drops
+# Zero Hitsplats
 
 Shows a blue hitsplat and a scrolling `0` when you attack without gaining damage XP. It gives you a visual cue for misses, similar to the XP drops you get when an attack lands.
 
@@ -29,7 +29,7 @@ Requires JDK 17. On Windows:
 .\gradlew.bat run
 ```
 
-On macOS or Linux, use `./gradlew` instead. The run command opens a development RuneLite client; enable **Zero XP Drops** in its plugin list. The plugin isn't on the Plugin Hub yet.
+On macOS or Linux, use `./gradlew` instead. The run command opens a development RuneLite client; enable **Zero Hitsplats** in its plugin list. The plugin isn't on the Plugin Hub yet.
 
 ## Credits
 

@@ -1,9 +1,9 @@
-package com.zeroxpdrops;
+package com.zerohitsplats;
 
 import net.runelite.client.config.*;
 
-@ConfigGroup("zeroxpdrops")
-public interface ZeroXpDropsConfig extends Config
+@ConfigGroup("zerohitsplats")
+public interface ZeroHitsplatsConfig extends Config
 {
     @ConfigItem(keyName = "attachToPlayer", name = "Attach to player", description = "Scroll above your player instead of the viewport center", position = 0)
     default boolean attachToPlayer() { return false; }

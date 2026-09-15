@@ -6,7 +6,7 @@ repositories {
 }
 
 def runeLiteVersion = '1.12.38'
-group = 'com.zeroxpdrops'
+group = 'com.zerohitsplats'
 version = '0.1.0'
 
 dependencies {
@@ -23,7 +23,7 @@ tasks.withType(JavaCompile).configureEach {
 
 tasks.register('run', JavaExec) {
     classpath = sourceSets.test.runtimeClasspath
-    mainClass = 'com.zeroxpdrops.ZeroXpDropsLauncher'
+    mainClass = 'com.zerohitsplats.ZeroHitsplatsLauncher'
     jvmArgs '-ea'
     args '--developer-mode', '--debug'
 }

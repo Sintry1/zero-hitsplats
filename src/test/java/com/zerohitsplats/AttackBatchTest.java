@@ -1,4 +1,4 @@
-package com.zeroxpdrops;
+package com.zerohitsplats;
 
 import org.junit.Test;
 import static org.junit.Assert.*;

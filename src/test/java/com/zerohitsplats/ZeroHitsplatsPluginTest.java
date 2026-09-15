@@ -1,4 +1,4 @@
-package com.zeroxpdrops;
+package com.zerohitsplats;
 
 import java.lang.reflect.Field;
 import net.runelite.api.*;
@@ -10,21 +10,22 @@ import org.junit.Before;
 import org.junit.Test;
 import static org.mockito.Mockito.*;
 
-public class ZeroXpDropsPluginTest
+public class ZeroHitsplatsPluginTest
 {
-    private ZeroXpDropsPlugin plugin;
+    private ZeroHitsplatsPlugin plugin;
     private Client client;
     private Player player;
-    private ZeroXpDropsOverlay overlay;
+    private ZeroHitsplatsOverlay overlay;
 
     @Before public void setup() throws Exception
     {
-        plugin = new ZeroXpDropsPlugin();
+        plugin = new ZeroHitsplatsPlugin();
         client = mock(Client.class);
         player = mock(Player.class);
-        overlay = mock(ZeroXpDropsOverlay.class);
+        overlay = mock(ZeroHitsplatsOverlay.class);
         put("client", client);
-        put("config", mock(ZeroXpDropsConfig.class));
+        put("configManager", mock(net.runelite.client.config.ConfigManager.class));
+        put("config", mock(ZeroHitsplatsConfig.class));
         put("overlay", overlay);
         put("overlayManager", mock(OverlayManager.class));
         put("spriteManager", mock(SpriteManager.class));
@@ -40,7 +41,7 @@ public class ZeroXpDropsPluginTest
 
     private void put(String name, Object value) throws Exception
     {
-        Field field = ZeroXpDropsPlugin.class.getDeclaredField(name);
+        Field field = ZeroHitsplatsPlugin.class.getDeclaredField(name);
         field.setAccessible(true);
         field.set(plugin, value);
     }

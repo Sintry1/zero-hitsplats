@@ -1,4 +1,4 @@
-package com.zeroxpdrops;
+package com.zerohitsplats;
 
 /** Reconciles events at the packet-batch boundary, regardless of XP/animation order. */
 final class AttackBatch

@@ -1,4 +1,4 @@
-package com.zeroxpdrops;
+package com.zerohitsplats;
 
 import com.google.inject.Provides;
 import java.util.Collections;
@@ -15,12 +15,13 @@ import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.OverlayManager;
 
-@PluginDescriptor(name = "Zero XP Drops", description = "Scrolling blue hitsplat and zero for attacks without damage XP", tags = {"combat", "xp", "miss"})
-public class ZeroXpDropsPlugin extends Plugin
+@PluginDescriptor(name = "Zero Hitsplats", description = "Scrolling blue hitsplat and zero for attacks without damage XP", tags = {"combat", "xp", "miss"})
+public class ZeroHitsplatsPlugin extends Plugin
 {
     @Inject private Client client;
-    @Inject private ZeroXpDropsConfig config;
-    @Inject private ZeroXpDropsOverlay overlay;
+    @Inject private ConfigManager configManager;
+    @Inject private ZeroHitsplatsConfig config;
+    @Inject private ZeroHitsplatsOverlay overlay;
     @Inject private OverlayManager overlayManager;
     @Inject private SpriteManager spriteManager;
     private final AttackBatch attacks = new AttackBatch();
@@ -30,12 +31,13 @@ public class ZeroXpDropsPlugin extends Plugin
     private long lastPreview;
 
     @Provides
-    ZeroXpDropsConfig provideConfig(ConfigManager manager) { return manager.getConfig(ZeroXpDropsConfig.class); }
+    ZeroHitsplatsConfig provideConfig(ConfigManager manager) { return manager.getConfig(ZeroHitsplatsConfig.class); }
 
     @Override
     protected void startUp()
     {
         reset();
+        LegacySettings.migrate(configManager);
         overlayManager.add(overlay);
         // Baseline on the next game tick, avoiding startup XP being mistaken for a hit.
     }

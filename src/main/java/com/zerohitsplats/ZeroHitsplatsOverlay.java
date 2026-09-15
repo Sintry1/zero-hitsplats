@@ -1,4 +1,4 @@
-package com.zeroxpdrops;
+package com.zerohitsplats;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -9,15 +9,15 @@ import net.runelite.api.Player;
 import net.runelite.client.ui.FontManager;
 import net.runelite.client.ui.overlay.*;
 
-public class ZeroXpDropsOverlay extends Overlay
+public class ZeroHitsplatsOverlay extends Overlay
 {
     private final Client client;
-    private final ZeroXpDropsConfig config;
+    private final ZeroHitsplatsConfig config;
     private final ArrayDeque<Long> drops = new ArrayDeque<>();
     private BufferedImage sprite;
 
     @Inject
-    ZeroXpDropsOverlay(Client client, ZeroXpDropsConfig config)
+    ZeroHitsplatsOverlay(Client client, ZeroHitsplatsConfig config)
     {
         this.client = client;
         this.config = config;
