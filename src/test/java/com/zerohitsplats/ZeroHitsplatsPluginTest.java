@@ -76,12 +76,12 @@ public class ZeroHitsplatsPluginTest
         verify(overlay, never()).addDrop();
     }
 
-    @Test public void magicSplashWithBaseXpShowsZero()
+    @Test public void magicSplashWithBaseXpDoesNotShowZero()
     {
         animate(AnimationID.HUMAN_CASTSTRIKE_STAFF);
         xp(Skill.MAGIC, 1005);
         tick();
-        verify(overlay).addDrop();
+        verify(overlay, never()).addDrop();
     }
 
     @Test public void damagingSpellDoesNotShowZero()
@@ -163,6 +163,101 @@ public class ZeroHitsplatsPluginTest
         projectiles(projectile(player));
         when(player.getAnimation()).thenReturn(AnimationID.HUMAN_BOW);
         plugin.startUp(); tick(); tick();
+        verify(overlay, never()).addDrop();
+    }
+    private void selectedStyle(String name)
+    {
+        EnumComposition weapons = mock(EnumComposition.class);
+        EnumComposition styles = mock(EnumComposition.class);
+        StructComposition style = mock(StructComposition.class);
+        when(client.getEnum(EnumID.WEAPON_STYLES)).thenReturn(weapons);
+        when(weapons.getIntValue(anyInt())).thenReturn(123456);
+        when(client.getEnum(123456)).thenReturn(styles);
+        when(styles.getIntVals()).thenReturn(new int[]{123});
+        when(client.getStructComposition(123)).thenReturn(style);
+        when(style.getStringValue(ParamID.ATTACK_STYLE_NAME)).thenReturn(name);
+    }
+
+    @Test public void rangedFamiliesShowMissesButNotSuccessfulHits() throws Exception
+    {
+        int[] animations = {
+            AnimationID.HUMAN_BOW, AnimationID.SNAPSHOT,
+            AnimationID.XBOWS_HUMAN_FIRE_AND_RELOAD_PVN, AnimationID.ZCB_ATTACK,
+            AnimationID.DTTD_PLAYER_FIRE_BONE_CROSSBOW,
+            AnimationID.BARROWS_REPEATING_CROSSBOW_FIRE,
+            AnimationID.SNAKEBOSS_BLOWPIPE_ATTACK, AnimationID.SNAKEBOSS_BLOWPIPE_ATTACK_ORNAMENT,
+            AnimationID.II_HUMAN_DART_THROW, AnimationID.II_HUMAN_DART_THROW_PVN,
+            AnimationID.HUMAN_DRAGON_KNIFE, AnimationID.HUMAN_STAKE2_PVN,
+            AnimationID.CHAINHIT, AnimationID.HUMAN_CHINCHOMPA_ATTACK_PVN,
+            AnimationID.BALLISTA_ATTACK, AnimationID.BALLISTA_ATTACK_PVN,
+            AnimationID.HUMAN_ATLATL_ATTACK_RANGED_01,
+            AnimationID.HUMAN_WEAPON_BOW_VENATOR01_SHOOT,
+            AnimationID.HUMAN_GLAIVE_RALOS01_UNCHARGED_THROW,
+            AnimationID.HUMAN_GLAIVE_RALOS01_UNCHARGED_SPECIAL,
+            AnimationID.HUMAN_GLAIVE_RALOS01_CHARGED_THROW
+        };
+        for (int animation : animations)
+        {
+            setup();
+            animate(animation);
+            projectiles(projectile(player));
+            tick(); tick();
+            verify(overlay, times(1)).addDrop();
+            setup();
+            animate(animation);
+            projectiles(projectile(player));
+            xp(Skill.RANGED, 1040);
+            tick(); tick();
+            verify(overlay, never()).addDrop();
+        }
+    }
+
+    @Test public void salamanderRangedMissShowsZero()
+    {
+        selectedStyle("Ranging");
+        animate(AnimationID.HUMAN_ATTACK_SALAMANDER);
+        projectiles(projectile(player));
+        tick();
+        verify(overlay).addDrop();
+    }
+
+    @Test public void salamanderMagicMissDoesNotShowZero()
+    {
+        selectedStyle("Casting");
+        animate(AnimationID.HUMAN_ATTACK_SALAMANDER);
+        projectiles(projectile(player));
+        tick();
+        verify(overlay, never()).addDrop();
+    }
+
+    @Test public void poweredStaffSharedAnimationDoesNotShowZero()
+    {
+        selectedStyle("Casting");
+        animate(AnimationID.HUMAN_AXE_CHOP);
+        projectiles(projectile(player));
+        tick();
+        verify(overlay, never()).addDrop();
+    }
+
+    @Test public void magicAnimationsWithoutXpDoNotShowZero() throws Exception
+    {
+        for (int animation : new int[]{AnimationID.HUMAN_CASTSTRIKE_STAFF,
+            AnimationID.POG_WARPED_SCEPTRE_ATTACK, AnimationID.TOA_SOT_CAST_B})
+        {
+            setup();
+            animate(animation);
+            projectiles(projectile(player));
+            tick(); tick();
+            verify(overlay, never()).addDrop();
+        }
+    }
+
+    @Test public void magicXpSuppressesLingeringRangedAnimation()
+    {
+        when(player.getAnimation()).thenReturn(AnimationID.SNAKEBOSS_BLOWPIPE_ATTACK);
+        projectiles(projectile(player));
+        xp(Skill.MAGIC, 1005);
+        tick();
         verify(overlay, never()).addDrop();
     }
 }

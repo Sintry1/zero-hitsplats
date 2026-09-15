@@ -1,6 +1,6 @@
 # Zero Hitsplats
 
-Shows a blue hitsplat and a scrolling `0` when you attack without gaining damage XP. It gives you a visual cue for misses, similar to the XP drops you get when an attack lands.
+Shows a blue hitsplat and a scrolling `0` when a melee or ranged attack gives no combat XP. It gives you a visual cue for misses, similar to the XP drops you get when an attack lands.
 
 Use it alongside Customizable XP Drops to keep your usual XP drops on successful hits.
 
@@ -16,7 +16,7 @@ Position and appearance settings are separate from Customizable XP Drops.
 
 ## How it works
 
-The plugin watches attack animations, projectiles and XP changes. Magic's base casting XP doesn't suppress a zero, so splashes can still show one.
+The plugin watches melee and ranged attack animations, projectiles and XP changes. It covers bows, crossbows, blowpipes, thrown weapons, chinchompas, ballistas, atlatls and tonalztics. Salamanders are included in melee and ranged mode. Magic casts and powered-staff attacks are excluded.
 
 Detection isn't perfect. Unusual attacks, delayed XP and targets that award no XP can produce missing or incorrect zeros. Multi-hit attacks are treated as one attack rather than separate hitsplats.
 

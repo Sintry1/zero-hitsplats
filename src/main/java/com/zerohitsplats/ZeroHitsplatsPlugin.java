@@ -69,7 +69,7 @@ public class ZeroHitsplatsPlugin extends Plugin
     {
         Player player = client.getLocalPlayer();
         if (!initialized || player == null || event.getActor() != player) { return; }
-        if (AttackAnimations.contains(player.getAnimation()))
+        if (AttackAnimations.contains(player.getAnimation()) && !CombatStyle.isMagic(client))
         {
             attacks.animation();
         }
@@ -92,10 +92,9 @@ public class ZeroHitsplatsPlugin extends Plugin
 
     private void recordXp(Skill skill)
     {
-        // Magic has base cast XP even on a splash. HP (or defensive damage XP)
-        // distinguishes a damaging spell from that base award.
+        // Any combat XP suppresses a zero, including base XP from magic casts.
         if (skill == Skill.HITPOINTS || skill == Skill.ATTACK || skill == Skill.STRENGTH
-            || skill == Skill.DEFENCE || skill == Skill.RANGED)
+            || skill == Skill.DEFENCE || skill == Skill.RANGED || skill == Skill.MAGIC)
         {
             attacks.damageXp();
         }
@@ -111,7 +110,8 @@ public class ZeroHitsplatsPlugin extends Plugin
         {
             active.add(p);
             if (initialized && !seen.contains(p) && p.getSourceActor() == client.getLocalPlayer()
-                && p.getTargetActor() != null && AttackAnimations.contains(client.getLocalPlayer().getAnimation()))
+                && p.getTargetActor() != null && AttackAnimations.contains(client.getLocalPlayer().getAnimation())
+                && !CombatStyle.isMagic(client))
             {
                 attacks.projectile();
             }
