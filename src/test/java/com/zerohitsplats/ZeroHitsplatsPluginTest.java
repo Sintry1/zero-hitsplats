@@ -260,4 +260,47 @@ public class ZeroHitsplatsPluginTest
         tick();
         verify(overlay, never()).addDrop();
     }
+    @Test public void noxiousAndSpecialAttacksShowOnlyMisses() throws Exception
+    {
+        int[] animations = {
+        AnimationID.ABYSSAL_DAGGER_SPECIAL,
+        AnimationID.BLESSED_SARADOMIN_SWORD_SPECIAL_PLAYER,
+        AnimationID.ARMADYL_SPECIAL_ATTACK,
+        AnimationID.DH_SWORD_UPDATE_DRAGON_SPECIAL_PLAYER,
+        AnimationID.HUMAN_INFERNAL_TECPATL_SPEC,
+        AnimationID.HUMAN_KARAMBIT_SPEC,
+        AnimationID.HUMAN_HALBERD_VIRULENCE_01,
+        AnimationID.HUMAN_HALBERD_VIRULENCE_02,
+        AnimationID.HUMAN_HALBERD_VIRULENCE_04,
+        AnimationID.TOXIC_BLOWPIPE_SPECIAL_UPDATED,
+        AnimationID.BALLISTA_SPECIAL_ATTACK,
+        AnimationID.WEAPON_MORRIGANS_JAVELIN_SPECIAL01,
+        AnimationID.WEAPON_MORRIGANS_THROWINGAXE_SPECIAL01,
+        AnimationID.HUMAN_WEAPON_EMBERLIGHT_01_SPEC,
+        AnimationID.HUMAN_WEAPON_BURNING_CLAWS_02_SPEC,
+        AnimationID.WEAPON_SWORD_OSMUMTEN03_SPECIAL,
+        AnimationID.HUMAN_SPECIAL_KHOPESH,
+        AnimationID.ROSEWOOD_BLOWPIPE_SPECIAL_ATTACK
+        };
+        for (int animation : animations)
+        {
+            setup();
+            animate(animation);
+            tick(); tick();
+            verify(overlay, times(1)).addDrop();
+            setup();
+            animate(animation);
+            xp(Skill.HITPOINTS, 1013);
+            tick(); tick();
+            verify(overlay, never()).addDrop();
+        }
+    }
+
+    @Test public void rangedSpecialWithSeveralProjectilesProducesOneDrop()
+    {
+        animate(AnimationID.HUMAN_SPECIAL01_WEBWEAVER);
+        projectiles(projectile(player), projectile(player), projectile(player), projectile(player));
+        tick(); tick();
+        verify(overlay, times(1)).addDrop();
+    }
 }

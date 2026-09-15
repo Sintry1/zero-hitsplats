@@ -18,6 +18,8 @@ Position and appearance settings are separate from Customizable XP Drops.
 
 The plugin watches melee and ranged attack animations, projectiles and XP changes. It covers bows, crossbows, blowpipes, thrown weapons, chinchompas, ballistas, atlatls and tonalztics. Salamanders are included in melee and ranged mode. Magic casts and powered-staff attacks are excluded.
 
+Noxious halberd swings and damaging melee and ranged special attacks are supported. Specials that only buff or heal do not count as attacks. A multi-hit special produces one zero only when the attack gives no combat XP.
+
 Detection isn't perfect. Unusual attacks, delayed XP and targets that award no XP can produce missing or incorrect zeros. Multi-hit attacks are treated as one attack rather than separate hitsplats.
 
 ## Build and run
