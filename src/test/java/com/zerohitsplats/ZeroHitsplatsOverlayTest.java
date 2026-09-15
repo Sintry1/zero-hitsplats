@@ -1,6 +1,10 @@
 package com.zerohitsplats;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.image.BufferedImage;
 import net.runelite.api.Client;
 import net.runelite.api.GameState;

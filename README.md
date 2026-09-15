@@ -31,8 +31,8 @@ Requires JDK 17. On Windows:
 .\gradlew.bat run
 ```
 
-On macOS or Linux, use `./gradlew` instead. The run command opens a development RuneLite client; enable **Zero Hitsplats** in its plugin list. The plugin isn't on the Plugin Hub yet.
+On macOS or Linux, use `./gradlew` instead. The run command opens a development RuneLite client; enable **Zero Hitsplats** in its plugin list.
 
 ## Credits
 
-Attack animation data comes from [Attack Timer Metronome](https://github.com/ngraves95/attacktimer). Its license is included in [LICENSE](LICENSE). The scrolling display is inspired by [Customizable XP Drops](https://github.com/l2-/template-plugin).
+Attack animation data is adapted from [Attack Timer Metronome](https://github.com/ngraves95/attacktimer); its license is reproduced in [THIRD_PARTY_NOTICES](THIRD_PARTY_NOTICES). The scrolling display is inspired by [Customizable XP Drops](https://github.com/l2-/template-plugin).

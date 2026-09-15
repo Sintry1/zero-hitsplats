@@ -1,13 +1,23 @@
 package com.zerohitsplats;
 
-import java.awt.*;
+import java.awt.AlphaComposite;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.util.ArrayDeque;
 import javax.inject.Inject;
 import net.runelite.api.Client;
+import net.runelite.api.GameState;
 import net.runelite.api.Player;
+import net.runelite.api.Point;
 import net.runelite.client.ui.FontManager;
-import net.runelite.client.ui.overlay.*;
+import net.runelite.client.ui.overlay.Overlay;
+import net.runelite.client.ui.overlay.OverlayLayer;
+import net.runelite.client.ui.overlay.OverlayPosition;
 
 public class ZeroHitsplatsOverlay extends Overlay
 {
@@ -21,10 +31,11 @@ public class ZeroHitsplatsOverlay extends Overlay
     {
         this.client = client;
         this.config = config;
-        setPosition(OverlayPosition.DETACHED);
+        setPosition(OverlayPosition.DYNAMIC);
+        setMovable(true);
         setSnappable(true);
         setLayer(OverlayLayer.ABOVE_SCENE);
-        setPriority(OverlayPriority.HIGH);
+        setPriority(Overlay.PRIORITY_HIGH);
     }
 
     void setSprite(BufferedImage sprite) { this.sprite = sprite; }
@@ -48,7 +59,7 @@ public class ZeroHitsplatsOverlay extends Overlay
         long now = System.nanoTime();
         double lifetime = config.distance() / (double) config.speed();
         while (!drops.isEmpty() && (now - drops.peekFirst()) / 1e9 >= lifetime) { drops.removeFirst(); }
-        if (client.getGameState() != net.runelite.api.GameState.LOGGED_IN) { return null; }
+        if (client.getGameState() != GameState.LOGGED_IN) { return null; }
         graphics.setFont(FontManager.getRunescapeFont().deriveFont(Font.PLAIN, (float) config.fontSize()));
         graphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
         int iconHeight = sprite == null ? config.iconSize()
@@ -63,7 +74,7 @@ public class ZeroHitsplatsOverlay extends Overlay
         if (config.attachToPlayer())
         {
             Player player = client.getLocalPlayer();
-            net.runelite.api.Point point = player == null ? null : player.getCanvasTextLocation(graphics, "", player.getLogicalHeight() + 40);
+            Point point = player == null ? null : player.getCanvasTextLocation(graphics, "", player.getLogicalHeight() + 40);
             if (point == null) { return null; }
             x = point.getX();
             y = point.getY();

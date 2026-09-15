@@ -1,6 +1,9 @@
 package com.zerohitsplats;
 
-import net.runelite.client.config.*;
+import net.runelite.client.config.Config;
+import net.runelite.client.config.ConfigGroup;
+import net.runelite.client.config.ConfigItem;
+import net.runelite.client.config.Range;
 
 @ConfigGroup("zerohitsplats")
 public interface ZeroHitsplatsConfig extends Config

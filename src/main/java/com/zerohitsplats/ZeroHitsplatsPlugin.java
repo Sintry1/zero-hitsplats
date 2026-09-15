@@ -5,8 +5,16 @@ import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.Set;
 import javax.inject.Inject;
-import net.runelite.api.*;
-import net.runelite.api.events.*;
+import net.runelite.api.Client;
+import net.runelite.api.GameState;
+import net.runelite.api.Player;
+import net.runelite.api.Projectile;
+import net.runelite.api.Skill;
+import net.runelite.api.events.AnimationChanged;
+import net.runelite.api.events.FakeXpDrop;
+import net.runelite.api.events.GameStateChanged;
+import net.runelite.api.events.GameTick;
+import net.runelite.api.events.StatChanged;
 import net.runelite.api.gameval.SpriteID;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
@@ -15,11 +23,14 @@ import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.OverlayManager;
 
-@PluginDescriptor(name = "Zero Hitsplats", description = "Scrolling blue hitsplat and zero for attacks without damage XP", tags = {"combat", "xp", "miss"})
+@PluginDescriptor(
+    name = "Zero Hitsplats",
+    description = "Shows a scrolling blue hitsplat and zero when a melee or ranged attack gives no combat XP",
+    tags = {"combat", "xp", "zero", "miss", "hitsplat"}
+)
 public class ZeroHitsplatsPlugin extends Plugin
 {
     @Inject private Client client;
-    @Inject private ConfigManager configManager;
     @Inject private ZeroHitsplatsConfig config;
     @Inject private ZeroHitsplatsOverlay overlay;
     @Inject private OverlayManager overlayManager;
@@ -37,7 +48,6 @@ public class ZeroHitsplatsPlugin extends Plugin
     protected void startUp()
     {
         reset();
-        LegacySettings.migrate(configManager);
         overlayManager.add(overlay);
         // Baseline on the next game tick, avoiding startup XP being mistaken for a hit.
     }

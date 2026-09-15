@@ -1,8 +1,23 @@
 package com.zerohitsplats;
 
 import java.lang.reflect.Field;
-import net.runelite.api.*;
-import net.runelite.api.events.*;
+import net.runelite.api.Actor;
+import net.runelite.api.Client;
+import net.runelite.api.Deque;
+import net.runelite.api.EnumComposition;
+import net.runelite.api.EnumID;
+import net.runelite.api.GameState;
+import net.runelite.api.NPC;
+import net.runelite.api.ParamID;
+import net.runelite.api.Player;
+import net.runelite.api.Projectile;
+import net.runelite.api.Skill;
+import net.runelite.api.StructComposition;
+import net.runelite.api.events.AnimationChanged;
+import net.runelite.api.events.FakeXpDrop;
+import net.runelite.api.events.GameStateChanged;
+import net.runelite.api.events.GameTick;
+import net.runelite.api.events.StatChanged;
 import net.runelite.api.gameval.AnimationID;
 import net.runelite.client.game.SpriteManager;
 import net.runelite.client.ui.overlay.OverlayManager;
@@ -24,7 +39,6 @@ public class ZeroHitsplatsPluginTest
         player = mock(Player.class);
         overlay = mock(ZeroHitsplatsOverlay.class);
         put("client", client);
-        put("configManager", mock(net.runelite.client.config.ConfigManager.class));
         put("config", mock(ZeroHitsplatsConfig.class));
         put("overlay", overlay);
         put("overlayManager", mock(OverlayManager.class));
