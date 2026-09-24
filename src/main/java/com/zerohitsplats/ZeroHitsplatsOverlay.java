@@ -25,6 +25,9 @@ public class ZeroHitsplatsOverlay extends Overlay
     private final ZeroHitsplatsConfig config;
     private final ArrayDeque<Long> drops = new ArrayDeque<>();
     private BufferedImage sprite;
+    // Derived font, re-derived only when the configured size changes.
+    private Font cachedFont;
+    private int cachedFontSize = -1;
 
     @Inject
     ZeroHitsplatsOverlay(Client client, ZeroHitsplatsConfig config)
@@ -56,22 +59,34 @@ public class ZeroHitsplatsOverlay extends Overlay
     @Override
     public Dimension render(Graphics2D graphics)
     {
+        // Config getters are not field reads — each parses a String — so snapshot the ones used
+        // repeatedly below. They cannot meaningfully change within a single frame.
+        final int distance = config.distance();
+        final int speed = config.speed();
+        final int iconSize = config.iconSize();
+        final int fontSize = config.fontSize();
+        final boolean attachToPlayer = config.attachToPlayer();
         long now = System.nanoTime();
-        double lifetime = config.distance() / (double) config.speed();
+        double lifetime = distance / (double) speed;
         while (!drops.isEmpty() && (now - drops.peekFirst()) / 1e9 >= lifetime) { drops.removeFirst(); }
         if (client.getGameState() != GameState.LOGGED_IN) { return null; }
-        graphics.setFont(FontManager.getRunescapeFont().deriveFont(Font.PLAIN, (float) config.fontSize()));
+        if (cachedFont == null || cachedFontSize != fontSize)
+        {
+            cachedFont = FontManager.getRunescapeFont().deriveFont(Font.PLAIN, (float) fontSize);
+            cachedFontSize = fontSize;
+        }
+        graphics.setFont(cachedFont);
         graphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
-        int iconHeight = sprite == null ? config.iconSize()
-            : Math.max(1, sprite.getHeight() * config.iconSize() / sprite.getWidth());
+        int iconHeight = sprite == null ? iconSize
+            : Math.max(1, sprite.getHeight() * iconSize / sprite.getWidth());
         int rowHeight = Math.max(iconHeight, graphics.getFontMetrics().getHeight()) + 8;
-        Dimension area = new Dimension(config.iconSize() + 5 + graphics.getFontMetrics().stringWidth("0") + 8,
-            config.distance() + rowHeight);
-        setMovable(!config.attachToPlayer());
-        setSnappable(!config.attachToPlayer());
+        Dimension area = new Dimension(iconSize + 5 + graphics.getFontMetrics().stringWidth("0") + 8,
+            distance + rowHeight);
+        setMovable(!attachToPlayer);
+        setSnappable(!attachToPlayer);
         int x = client.getViewportXOffset() + client.getViewportWidth() / 2;
         int y = client.getViewportYOffset();
-        if (config.attachToPlayer())
+        if (attachToPlayer)
         {
             Player player = client.getLocalPlayer();
             Point point = player == null ? null : player.getCanvasTextLocation(graphics, "", player.getLogicalHeight() + 40);
@@ -86,24 +101,25 @@ public class ZeroHitsplatsOverlay extends Overlay
         {
             // RuneLite translates graphics to the persisted Alt-drag position.
             // Before the first drag, retain the old viewport/player placement.
-            if (config.attachToPlayer() || (getPreferredLocation() == null && getPreferredPosition() == null))
+            if (attachToPlayer || (getPreferredLocation() == null && getPreferredPosition() == null))
             {
                 int left = x - area.width / 2;
-                int top = y - config.distance() - rowHeight / 2;
+                int top = y - distance - rowHeight / 2;
                 g.translate(left - getBounds().x, top - getBounds().y);
                 getBounds().setLocation(left, top);
             }
             x = area.width / 2;
-            y = config.distance() + rowHeight / 2;
+            y = distance + rowHeight / 2;
             // Keep non-empty bounds while idle so holding Alt always reveals the handle.
             if (sprite == null) { return area; }
+            final boolean fade = config.fade();
             for (long start : drops)
             {
                 double age = (now - start) / 1e9;
                 if (age < 0) { continue; }
-                float alpha = config.fade() ? (float) Math.min(1, (lifetime - age) / (lifetime * 0.25)) : 1;
+                float alpha = fade ? (float) Math.min(1, (lifetime - age) / (lifetime * 0.25)) : 1;
                 g.setComposite(AlphaComposite.SrcOver.derive(Math.max(0, alpha)));
-                drawDrop(g, sprite, x, y - (int) (age * config.speed()), config.iconSize());
+                drawDrop(g, sprite, x, y - (int) (age * speed), iconSize);
             }
         }
         finally { g.dispose(); }

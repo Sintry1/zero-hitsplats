@@ -37,7 +37,10 @@ public class ZeroHitsplatsPlugin extends Plugin
     @Inject private SpriteManager spriteManager;
     private final AttackBatch attacks = new AttackBatch();
     private final int[] xp = new int[Skill.values().length];
-    private final Set<Projectile> seen = Collections.newSetFromMap(new IdentityHashMap<>());
+    // Two identity sets swapped each tick instead of allocating a fresh one: `seen` holds last
+    // tick's projectiles, `seenSpare` is refilled as this tick's and the two trade places.
+    private Set<Projectile> seen = Collections.newSetFromMap(new IdentityHashMap<>());
+    private Set<Projectile> seenSpare = Collections.newSetFromMap(new IdentityHashMap<>());
     private boolean initialized;
     private long lastPreview;
 
@@ -64,6 +67,7 @@ public class ZeroHitsplatsPlugin extends Plugin
         initialized = false;
         attacks.clear();
         seen.clear();
+        seenSpare.clear();
         overlay.clear();
         lastPreview = 0;
     }
@@ -115,19 +119,35 @@ public class ZeroHitsplatsPlugin extends Plugin
     {
         if (client.getGameState() != GameState.LOGGED_IN || client.getLocalPlayer() == null) { return; }
         overlay.setSprite(spriteManager.getSprite(SpriteID.Hitmark.HITSPLAT_BLUE_MISS, 0));
-        Set<Projectile> active = Collections.newSetFromMap(new IdentityHashMap<>());
+        final Player localPlayer = client.getLocalPlayer();
+        final Set<Projectile> active = seenSpare;
+        active.clear();
+        // Neither the animation check nor isMagic() depends on the projectile, and nothing in the
+        // loop body mutates game state, so both are loop-invariant. isMagic() is not cheap — two
+        // varbit reads, two enum lookups, a struct fetch — and the original short-circuit meant it
+        // was never evaluated on ticks with no qualifying projectile, so resolve it lazily to keep
+        // idle ticks free.
+        Boolean meleeOrRangedAttack = null;
         for (Projectile p : client.getProjectiles())
         {
             active.add(p);
-            if (initialized && !seen.contains(p) && p.getSourceActor() == client.getLocalPlayer()
-                && p.getTargetActor() != null && AttackAnimations.contains(client.getLocalPlayer().getAnimation())
-                && !CombatStyle.isMagic(client))
+            if (initialized && !seen.contains(p) && p.getSourceActor() == localPlayer
+                && p.getTargetActor() != null)
             {
-                attacks.projectile();
+                if (meleeOrRangedAttack == null)
+                {
+                    meleeOrRangedAttack = AttackAnimations.contains(localPlayer.getAnimation())
+                        && !CombatStyle.isMagic(client);
+                }
+                if (meleeOrRangedAttack)
+                {
+                    attacks.projectile();
+                }
             }
         }
-        seen.retainAll(active);
-        seen.addAll(active);
+        // retainAll(active) then addAll(active) left `seen` holding exactly `active`, so swap.
+        seenSpare = seen;
+        seen = active;
         if (!initialized)
         {
             for (Skill skill : Skill.values()) { xp[skill.ordinal()] = client.getSkillExperience(skill); }
